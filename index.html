@@ -245,7 +245,22 @@
       display: grid;
       place-items: center;
       margin-top: 3px;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      color: white;
+      background: transparent;
+      font: inherit;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .24s ease, filter .24s ease;
     }
+    .reactor-wrap:hover:not(:disabled) { transform: scale(1.035); filter: brightness(1.15); }
+    .reactor-wrap:active:not(:disabled) { transform: scale(.965); }
+    .reactor-wrap:focus-visible .reactor { outline: 2px solid white; outline-offset: 8px; }
+    .reactor-wrap:disabled { cursor: not-allowed; }
+    .reactor-wrap:disabled:not(.sequence-active):not(.launch-locked) .reactor { filter: saturate(.55) brightness(.72); }
     .orbit {
       position: absolute;
       inset: 2%;
@@ -261,31 +276,74 @@
 
     .reactor {
       position: relative;
-      width: 62%;
-      height: 62%;
+      z-index: 2;
+      width: 68%;
+      height: 68%;
       display: grid;
       place-items: center;
       border: 1px solid rgba(99, 220, 255, .52);
       border-radius: 50%;
       background: radial-gradient(circle, rgba(25, 109, 148, .42), rgba(4, 24, 43, .9) 64%);
       box-shadow: inset 0 0 40px rgba(49, 216, 255, .23), 0 0 60px rgba(49, 216, 255, .14);
+      transition: filter .25s ease, box-shadow .25s ease;
     }
     .reactor::before, .reactor::after { content: ""; position: absolute; border-radius: 50%; border: 1px solid rgba(49, 216, 255, .22); }
     .reactor::before { inset: 8px; border-style: dashed; animation: spin 15s linear infinite; }
     .reactor::after { inset: 21px; box-shadow: inset 0 0 20px rgba(49, 216, 255, .16); }
     .core {
       position: relative;
-      z-index: 2;
-      width: 44%;
-      height: 44%;
-      display: grid;
-      place-items: center;
+      z-index: 4;
+      width: 70%;
+      height: 70%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
       border-radius: 50%;
       background: radial-gradient(circle at 38% 30%, #fff, #61e8ff 16%, #087ca8 43%, #032035 76%);
       box-shadow: 0 0 28px rgba(49, 216, 255, .92), 0 0 90px rgba(49, 216, 255, .5);
       animation: breathe 1.9s ease-in-out infinite;
     }
-    .core svg { width: 54%; fill: none; stroke: white; stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 7px white); }
+    .core-kicker { margin-bottom: 5px; font: 900 clamp(6px, .65vw, 9px) ui-monospace, monospace; letter-spacing: .19em; opacity: .82; }
+    .core-label { font-size: clamp(14px, 1.45vw, 20px); line-height: .95; letter-spacing: .04em; text-shadow: 0 0 12px rgba(255,255,255,.9); }
+    .core-status { max-width: 112px; margin-top: 7px; font: 900 clamp(5px, .55vw, 7px) ui-monospace, monospace; line-height: 1.35; letter-spacing: .1em; opacity: .78; }
+    .energy-ring {
+      position: absolute;
+      z-index: 3;
+      inset: 22%;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0 12%, var(--cyan) 14% 18%, transparent 20% 45%, rgba(255,212,84,.95) 48% 52%, transparent 55% 79%, var(--cyan) 82% 87%, transparent 90%);
+      -webkit-mask: radial-gradient(circle, transparent 62%, #000 64% 69%, transparent 71%);
+      mask: radial-gradient(circle, transparent 62%, #000 64% 69%, transparent 71%);
+      filter: drop-shadow(0 0 8px rgba(49,216,255,.9));
+      animation: spin 5.5s linear infinite;
+      pointer-events: none;
+    }
+    .energy-ring.two { inset: 27%; opacity: .55; animation-duration: 3.7s; animation-direction: reverse; }
+    .spark-wheel { position: absolute; z-index: 1; inset: 0; pointer-events: none; }
+    .spark-wheel i {
+      --a: 0deg;
+      position: absolute;
+      left: calc(50% - 1px);
+      top: 50%;
+      width: 2px;
+      height: 42px;
+      border-radius: 999px;
+      opacity: 0;
+      background: linear-gradient(to top, transparent, white 36%, var(--cyan));
+      box-shadow: 0 0 10px var(--cyan);
+      transform-origin: 50% 0;
+      transform: rotate(var(--a)) translateY(-96px) scaleY(.1);
+    }
+    .spark-wheel i:nth-child(1) { --a: 0deg; }
+    .spark-wheel i:nth-child(2) { --a: 45deg; }
+    .spark-wheel i:nth-child(3) { --a: 90deg; }
+    .spark-wheel i:nth-child(4) { --a: 135deg; }
+    .spark-wheel i:nth-child(5) { --a: 180deg; }
+    .spark-wheel i:nth-child(6) { --a: 225deg; }
+    .spark-wheel i:nth-child(7) { --a: 270deg; }
+    .spark-wheel i:nth-child(8) { --a: 315deg; }
     .pulse { position: absolute; inset: 31%; border: 1px solid var(--cyan); border-radius: 50%; opacity: 0; }
 
     .particle-field { position: absolute; inset: 0; pointer-events: none; }
@@ -297,62 +355,10 @@
     .particle-field i:nth-child(5) { transform: translate(-195px, 195px); animation-delay: .8s; }
     .particle-field i:nth-child(6) { transform: translate(195px, 210px); animation-delay: 1s; }
 
-    .copy { min-height: 103px; }
+    .copy { min-height: 98px; margin-top: 7px; }
     .copy p { margin: 0 0 5px; color: var(--cyan); font-size: 9px; font-weight: 900; letter-spacing: .27em; }
     .copy h1 { margin: 0; font-size: clamp(31px, 4vw, 57px); line-height: .98; text-transform: uppercase; letter-spacing: -.035em; text-shadow: 0 0 28px rgba(49, 216, 255, .18); }
     .copy span { display: block; max-width: 540px; margin: 9px auto 0; color: #8ca8ba; font-size: 11px; line-height: 1.5; }
-
-    .control-zone { min-height: 70px; display: grid; place-items: center; }
-    .launch-button {
-      position: relative;
-      isolation: isolate;
-      min-width: min(490px, 88vw);
-      padding: 19px 58px;
-      overflow: hidden;
-      border: 1px solid rgba(49, 216, 255, .82);
-      color: white;
-      background: linear-gradient(110deg, rgba(5, 39, 61, .96), rgba(7, 124, 156, .78), rgba(5, 39, 61, .96));
-      clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 16px 100%, 0 50%);
-      box-shadow: 0 0 0 1px rgba(49, 216, 255, .13), 0 0 40px rgba(49, 216, 255, .25), inset 0 0 32px rgba(49, 216, 255, .08);
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: transform .18s, filter .18s, opacity .18s;
-    }
-    .launch-button:hover:not(:disabled) { transform: scale(1.016); filter: brightness(1.22); }
-    .launch-button:active:not(:disabled) { transform: scale(.985); }
-    .launch-button:disabled { cursor: not-allowed; opacity: .48; }
-    .launch-button::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(110deg, transparent 20%, rgba(255,255,255,.24) 48%, transparent 75%); transform: translateX(-130%); animation: buttonScan 2.8s ease-in-out infinite; }
-    .launch-button strong, .launch-button small { display: block; }
-    .launch-button strong { font-size: 14px; letter-spacing: .18em; }
-    .launch-button small { margin-top: 5px; color: var(--cyan-soft); font-size: 8px; font-weight: 800; letter-spacing: .16em; }
-    .diamond { position: absolute; left: 28px; top: 50%; color: var(--gold); transform: translateY(-50%) rotate(45deg); text-shadow: 0 0 12px var(--gold); }
-
-    .progress {
-      position: relative;
-      display: none;
-      width: min(450px, 88vw);
-      height: 42px;
-      overflow: hidden;
-      border: 1px solid rgba(49, 216, 255, .27);
-      background: rgba(3, 18, 32, .83);
-      place-items: center;
-    }
-    .progress::before { content: ""; position: absolute; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(49, 216, 255, .46), transparent); animation: sweep 1.15s linear infinite; }
-    .progress span { position: relative; z-index: 1; font-size: 8px; font-weight: 900; letter-spacing: .18em; }
-
-    .locked {
-      display: none;
-      min-width: min(410px, 86vw);
-      padding: 14px 25px;
-      border: 1px solid rgba(145, 223, 63, .46);
-      color: #e2ffbf;
-      background: rgba(42, 88, 18, .25);
-      box-shadow: 0 0 28px rgba(145, 223, 63, .14);
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: .18em;
-    }
-    .locked i { color: var(--green); text-shadow: 0 0 12px var(--green); animation: blink 1.1s infinite; }
 
     .stage-dots { display: flex; gap: 9px; }
     .stage-dots span { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid rgba(70, 171, 204, .25); color: #527287; font: 700 8px ui-monospace, monospace; transform: rotate(45deg); transition: .3s; }
@@ -364,8 +370,18 @@
 
     .launch-flash { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 43%, rgba(255,255,255,.95), rgba(49,216,255,.38) 16%, rgba(145,223,63,.15) 29%, transparent 56%); }
 
-    body.stage-countdown .core, body.stage-charging .core { animation: charge .45s ease-in-out infinite alternate; }
+    body.stage-countdown .orbit { animation-duration: 2.2s; }
+    body.stage-countdown .orbit:nth-child(2) { animation-duration: 1.7s; }
+    body.stage-charging .orbit { animation-duration: .72s; }
+    body.stage-charging .orbit:nth-child(2) { animation-duration: .48s; }
+    body.stage-countdown .energy-ring { animation-duration: 1.1s; opacity: .95; }
+    body.stage-charging .energy-ring { animation-duration: .32s; filter: drop-shadow(0 0 17px var(--cyan)); }
+    body.stage-countdown .core, body.stage-charging .core { animation: charge .34s ease-in-out infinite alternate; }
+    body.stage-ignition .reactor-wrap { animation: ignitionKick .85s cubic-bezier(.2,.9,.2,1) both; }
+    body.stage-ignition .spark-wheel i { animation: sparkBurst 1.15s ease-out both; }
+    body.stage-ignition .spark-wheel i:nth-child(even) { animation-delay: .08s; }
     body.stage-ignition .core, body.stage-complete .core { background: radial-gradient(circle at 38% 30%, #fff, #e1ff9f 18%, #91df3f 44%, #17420f 77%); box-shadow: 0 0 40px rgba(145,223,63,1), 0 0 120px rgba(145,223,63,.7), 0 0 185px rgba(49,216,255,.28); }
+    body.stage-complete .energy-ring { background: conic-gradient(from 0deg, transparent 0 10%, var(--green) 12% 21%, transparent 23% 46%, #fff 49% 53%, transparent 56% 78%, var(--green) 81% 89%, transparent 92%); filter: drop-shadow(0 0 10px var(--green)); }
     body.stage-ignition .pulse, body.stage-complete .pulse { border-color: var(--green); animation: wave 1.4s ease-out infinite; }
     body.stage-ignition .pulse.two, body.stage-complete .pulse.two { animation-delay: .7s; }
     body.stage-ignition .launch-flash { animation: flash 1.2s ease-out both; }
@@ -377,10 +393,10 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes breathe { 50% { transform: scale(1.09); filter: brightness(1.35); } }
     @keyframes charge { to { transform: scale(1.13); filter: brightness(1.58); } }
+    @keyframes ignitionKick { 0% { transform: scale(.9); } 28% { transform: scale(1.16); } 55% { transform: scale(.98); } 100% { transform: scale(1.04); } }
+    @keyframes sparkBurst { 0% { opacity: 0; transform: rotate(var(--a)) translateY(-80px) scaleY(.1); } 24% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--a)) translateY(-168px) scaleY(1.8); } }
     @keyframes wave { 0% { transform: scale(.5); opacity: .9; } 100% { transform: scale(3.5); opacity: 0; } }
     @keyframes flash { 0% { opacity: 0; transform: scale(.42); } 24% { opacity: 1; } 100% { opacity: .13; transform: scale(1.35); } }
-    @keyframes sweep { from { transform: translateX(-150%); } to { transform: translateX(150%); } }
-    @keyframes buttonScan { 0%, 52% { transform: translateX(-130%); } 88%, 100% { transform: translateX(130%); } }
     @keyframes twinkle { to { opacity: .95; filter: brightness(1.5); } }
     @keyframes blink { 50% { opacity: .25; } }
     @keyframes scanPage { from { top: -2px; } to { top: 100%; } }
@@ -398,8 +414,6 @@
       .reactor-wrap { width: min(270px, 34vh); height: min(270px, 34vh); }
       .copy h1 { font-size: clamp(29px, 9vw, 42px); }
       .copy span { max-width: 350px; font-size: 10px; }
-      .launch-button { padding-inline: 46px 28px; }
-      .diamond { left: 20px; }
     }
 
     @media (max-height: 700px) and (min-width: 721px) {
@@ -443,30 +457,26 @@
     <aside class="hud hud-right" aria-hidden="true">OUTPUT CHANNEL<strong>GPIO 22</strong><span class="hud-line"><i></i></span><small id="relayState">LINK SECURE</small></aside>
 
     <div class="eyebrow">OFFICIATION CONTROL</div>
-    <div class="reactor-wrap" aria-hidden="true">
+    <button id="launchButton" class="reactor-wrap" type="button" aria-label="Touch to ignite official launch" disabled>
       <div class="orbit"><i></i><i></i><i></i></div>
       <div class="orbit"><i></i><i></i><i></i></div>
+      <div class="spark-wheel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="pulse"></div><div class="pulse two"></div>
       <div class="reactor">
+        <div class="energy-ring"></div><div class="energy-ring two"></div>
         <div class="core">
-          <svg id="coreIcon" viewBox="0 0 64 64"><path d="M32 8v23M19 15.5a23 23 0 1 0 26 0"></path></svg>
+          <span id="coreKicker" class="core-kicker">SYSTEM LINK</span>
+          <strong id="coreLabel" class="core-label">TOUCH<br>TO IGNITE</strong>
+          <small id="coreStatus" class="core-status">WAITING FOR ESP32</small>
         </div>
       </div>
-    </div>
+    </button>
 
     <section class="copy" aria-live="polite">
       <p id="stageLabel">CEREMONIAL SYSTEM READY</p>
-      <h1 id="stageTitle">Touch to Ignite</h1>
-      <span id="stageDetail">One tap begins the official launch sequence.</span>
+      <h1 id="stageTitle">System Ready</h1>
+      <span id="stageDetail">Touch the energy core to begin the official launch sequence.</span>
     </section>
-
-    <div class="control-zone">
-      <button id="launchButton" class="launch-button" type="button" disabled>
-        <i class="diamond">◆</i><strong>INITIATE OFFICIAL LAUNCH</strong><small id="buttonStatus">WAITING FOR ESP32 CONNECTION</small>
-      </button>
-      <div id="progress" class="progress"><span>SEQUENCE IN PROGRESS - PLEASE STAND BY</span></div>
-      <div id="locked" class="locked"><i>●</i> CEREMONIAL OUTPUT LOCKED ON</div>
-    </div>
   </main>
 
   <footer class="footer">
@@ -520,14 +530,12 @@
     function showReady() {
       if (fired) return;
       setBodyStage("ready");
-      setCopy("CEREMONIAL SYSTEM READY", "Touch to Ignite", "One tap begins the official launch sequence.");
-      $("launchButton").style.display = "block";
+      setCopy("CEREMONIAL SYSTEM READY", "System Ready", "Touch the energy core to begin the official launch sequence.");
+      $("launchButton").classList.remove("sequence-active", "launch-locked");
       $("launchButton").disabled = !connectionReady();
-      $("buttonStatus").textContent = connectionReady()
-        ? "VIP TOUCH CONTROL - SYSTEM READY"
-        : "CONNECT ESP32 TO ENABLE LAUNCH";
-      $("progress").style.display = "none";
-      $("locked").style.display = "none";
+      $("coreKicker").textContent = connectionReady() ? "VIP TOUCH CONTROL" : "SYSTEM LINK";
+      $("coreLabel").innerHTML = "TOUCH<br>TO IGNITE";
+      $("coreStatus").textContent = connectionReady() ? "SYSTEM READY" : "WAITING FOR ESP32";
       $("matrixState").textContent = "READY";
       $("relayState").textContent = connectionReady() ? "LINK SECURE" : "AWAITING FIREBASE";
       clearStageDots();
@@ -539,14 +547,16 @@
       sequenceTimers = [];
       setBodyStage("complete");
       setCopy("OFFICIAL LAUNCH CONFIRMED", "ICGSCE-IPET 2026", "A new chapter in global sustainability begins now.");
-      $("launchButton").style.display = "none";
-      $("progress").style.display = "none";
-      $("locked").style.display = "block";
+      $("launchButton").disabled = true;
+      $("launchButton").classList.remove("sequence-active");
+      $("launchButton").classList.add("launch-locked");
+      $("coreKicker").textContent = "LAUNCH CONFIRMED";
+      $("coreLabel").innerHTML = "RELAY<br>LOCKED ON";
+      $("coreStatus").textContent = "GPIO 22 ACTIVE";
       $("matrixState").textContent = "LOCKED";
       $("relayState").textContent = "RELAY ACTIVE";
       activateStageDot(3);
       setDevice("online", "RELAY ACTIVE");
-      $("coreIcon").innerHTML = '<path d="M16 33.5 27.5 45 49 20"></path>';
       if (!fromDeviceStatus && navigator.vibrate) navigator.vibrate([70, 40, 120]);
     }
 
@@ -572,8 +582,11 @@
         failSequence("Firebase could not send the launch command. Check the connection and try again.");
         return;
       }
-      $("launchButton").style.display = "none";
-      $("progress").style.display = "grid";
+      $("launchButton").disabled = true;
+      $("launchButton").classList.add("sequence-active");
+      $("coreKicker").textContent = "AUTHORITY VERIFIED";
+      $("coreLabel").innerHTML = "COMMAND<br>ACCEPTED";
+      $("coreStatus").textContent = "INITIALISING CORE";
       setBodyStage("countdown");
       setCopy("LAUNCH SEQUENCE / 03", "Authority Verified", "Official command accepted. Initialising the energy core.");
       $("matrixState").textContent = "SYNC";
@@ -583,12 +596,18 @@
       sequenceTimers.push(setTimeout(() => {
         setBodyStage("charging");
         setCopy("LAUNCH SEQUENCE / 02", "Core Synchronising", "Sustainability energy matrix is approaching full output.");
+        $("coreKicker").textContent = "ENERGY MATRIX";
+        $("coreLabel").innerHTML = "CORE<br>SYNC";
+        $("coreStatus").textContent = "OUTPUT RISING";
         activateStageDot(2);
       }, 1400));
 
       sequenceTimers.push(setTimeout(() => {
         setBodyStage("ignition");
         setCopy("LAUNCH SEQUENCE / 01", "Ignition", "GPIO 22 is now active. Ceremonial output is locked ON.");
+        $("coreKicker").textContent = "IGNITION";
+        $("coreLabel").innerHTML = "OUTPUT<br>ACTIVE";
+        $("coreStatus").textContent = "GPIO 22 ON";
         $("relayState").textContent = "RELAY ACTIVE";
         activateStageDot(3);
       }, 3600));
@@ -633,6 +652,7 @@
           if (!fired) showComplete(true);
           else {
             $("relayState").textContent = "RELAY ACTIVE";
+            $("coreStatus").textContent = "GPIO 22 ACTIVE";
             setDevice("online", "RELAY ACTIVE");
           }
         } else if (!fired) {
@@ -652,6 +672,8 @@
       firebaseOnline = false;
       deviceOnline = false;
       setDevice("error", "ADD FIREBASE CONFIG");
+      $("coreKicker").textContent = "CONFIGURATION";
+      $("coreStatus").textContent = "FIREBASE CONFIG REQUIRED";
       $("stageDetail").textContent = "Open firebase-config.js and paste your Firebase web configuration.";
     }
   </script>
