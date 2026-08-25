@@ -1,11 +1,10 @@
-// Firebase Console > Project settings > Your apps > Web app > SDK setup.
-// Replace every YOUR_... value with the values from your Firebase project.
 export const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAE9Vanj_5astQm7HYsKOtjj6oumiZhROk",
+  authDomain: "robotronix-30a13.firebaseapp.com",
+  databaseURL: "https://robotronix-30a13-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "robotronix-30a13",
+  storageBucket: "robotronix-30a13.firebasestorage.app",
+  messagingSenderId: "861213305570",
+  appId: "1:861213305570:web:fd451915e0b2125e494cbb",
+  measurementId: "G-LWQY1ERC1P"
 };
