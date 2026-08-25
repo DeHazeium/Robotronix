@@ -82,6 +82,90 @@
       animation: scanPage 8s linear infinite;
     }
 
+    #fxCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: .82;
+    }
+
+    .aurora-field, .data-streams {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .aurora-field i {
+      position: absolute;
+      width: 42vw;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      filter: blur(76px);
+      opacity: .1;
+      background: var(--cyan);
+      animation: auroraDrift 13s ease-in-out infinite alternate;
+    }
+    .aurora-field i:nth-child(1) { left: -14%; top: 12%; }
+    .aurora-field i:nth-child(2) { right: -12%; top: 18%; background: var(--green); animation-delay: -6s; animation-duration: 17s; }
+    .aurora-field i:nth-child(3) { left: 33%; bottom: -32%; width: 34vw; background: #167cff; animation-delay: -9s; animation-duration: 20s; }
+    .data-streams { opacity: .28; }
+    .data-streams i {
+      position: absolute;
+      top: -28%;
+      width: 1px;
+      height: 24%;
+      background: linear-gradient(transparent, rgba(49,216,255,.9), transparent);
+      box-shadow: 0 0 8px rgba(49,216,255,.6);
+      animation: dataFall 7s linear infinite;
+    }
+    .data-streams i:nth-child(1) { left: 8%; animation-delay: -1s; }
+    .data-streams i:nth-child(2) { left: 24%; animation-delay: -4.8s; animation-duration: 9s; }
+    .data-streams i:nth-child(3) { left: 41%; animation-delay: -2.2s; animation-duration: 6s; }
+    .data-streams i:nth-child(4) { left: 63%; animation-delay: -5.6s; animation-duration: 8s; }
+    .data-streams i:nth-child(5) { left: 79%; animation-delay: -.6s; animation-duration: 6.7s; }
+    .data-streams i:nth-child(6) { left: 93%; animation-delay: -3.4s; animation-duration: 9.6s; }
+
+    .viewport-frame {
+      position: fixed;
+      inset: 102px 24px 82px;
+      z-index: 12;
+      pointer-events: none;
+      opacity: .42;
+    }
+    .viewport-frame i { position: absolute; width: 54px; height: 54px; }
+    .viewport-frame i::before, .viewport-frame i::after { content: ""; position: absolute; background: var(--cyan); box-shadow: 0 0 9px rgba(49,216,255,.65); }
+    .viewport-frame i::before { width: 100%; height: 1px; }
+    .viewport-frame i::after { width: 1px; height: 100%; }
+    .viewport-frame i:nth-child(1) { left: 0; top: 0; }
+    .viewport-frame i:nth-child(2) { right: 0; top: 0; transform: rotate(90deg); }
+    .viewport-frame i:nth-child(3) { right: 0; bottom: 0; transform: rotate(180deg); }
+    .viewport-frame i:nth-child(4) { left: 0; bottom: 0; transform: rotate(270deg); }
+
+    .lens-flare, .chromatic-flash {
+      position: fixed;
+      inset: 0;
+      z-index: 11;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .lens-flare {
+      background:
+        linear-gradient(transparent 49.8%, rgba(255,255,255,.95) 50%, transparent 50.25%),
+        radial-gradient(circle at 50% 44.5%, #fff 0 1%, rgba(49,216,255,.8) 2%, rgba(49,216,255,.18) 9%, transparent 29%);
+      mix-blend-mode: screen;
+    }
+    .chromatic-flash {
+      background:
+        radial-gradient(circle at 48.6% 44.5%, rgba(0,217,255,.35), transparent 26%),
+        radial-gradient(circle at 51.4% 44.5%, rgba(145,223,63,.28), transparent 26%);
+      mix-blend-mode: screen;
+    }
+
     .topbar, .footer {
       position: fixed;
       left: 0;
@@ -205,17 +289,54 @@
         linear-gradient(90deg, rgba(49, 216, 255, .16) 1px, transparent 1px);
       background-size: 72px 72px;
       mask-image: radial-gradient(ellipse at center, #000, transparent 70%);
+      animation: gridCruise 7s linear infinite;
     }
+
+    .energy-beam {
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+      top: 7%;
+      width: 4px;
+      height: 75%;
+      opacity: 0;
+      transform: translateX(-50%) scaleY(.1);
+      transform-origin: center;
+      background: linear-gradient(transparent, rgba(255,255,255,.98) 42%, var(--cyan) 55%, transparent);
+      box-shadow: 0 0 18px var(--cyan), 0 0 65px var(--cyan), 0 0 120px rgba(49,216,255,.55);
+      transition: opacity .35s ease;
+    }
+
+    .countdown-ghost {
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+      top: 48%;
+      width: 100%;
+      transform: translate(-50%, -50%);
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(104,227,255,.16);
+      font: 900 clamp(170px, 30vw, 450px)/.75 "Arial Narrow", sans-serif;
+      letter-spacing: -.09em;
+      opacity: 0;
+      filter: drop-shadow(0 0 40px rgba(49,216,255,.18));
+      pointer-events: none;
+    }
+    .countdown-ghost.tick { animation: ghostTick 1.1s cubic-bezier(.16,.84,.3,1) both; }
+    .countdown-ghost.blast { color: rgba(255,255,255,.08); -webkit-text-stroke-color: rgba(255,255,255,.34); animation: ghostBlast 1.25s ease-out both; }
+    .countdown-ghost.live { color: rgba(145,223,63,.025); -webkit-text-stroke-color: rgba(145,223,63,.11); opacity: 1; animation: liveFloat 5s ease-in-out infinite alternate; }
 
     .logo-card {
       position: absolute;
       top: 16%;
       z-index: 4;
       width: clamp(125px, 13vw, 182px);
+      filter: drop-shadow(0 0 18px rgba(49,216,255,.1));
+      animation: logoFloat 4.8s ease-in-out infinite alternate;
     }
     .logo-card img { display: block; width: 100%; height: clamp(100px, 12vw, 155px); object-fit: contain; }
     .logo-one { left: clamp(22px, 6vw, 92px); }
-    .logo-two { right: clamp(22px, 6vw, 92px); }
+    .logo-two { right: clamp(22px, 6vw, 92px); animation-delay: -2.4s; }
 
     .hud {
       position: absolute;
@@ -229,13 +350,14 @@
       text-align: left;
       font: 700 8px ui-monospace, monospace;
       letter-spacing: .12em;
+      animation: hudHover 3.4s ease-in-out infinite alternate;
     }
     .hud strong { display: block; margin: 6px 0; color: white; font-size: 16px; }
     .hud-line { display: block; height: 2px; margin: 8px 0; background: rgba(49, 216, 255, .14); }
-    .hud-line i { display: block; width: 76%; height: 100%; background: var(--cyan); box-shadow: 0 0 9px var(--cyan); }
+    .hud-line i { display: block; width: 76%; height: 100%; background: var(--cyan); box-shadow: 0 0 9px var(--cyan); animation: meterFlux 2.2s ease-in-out infinite alternate; }
     .hud small { color: var(--cyan); }
     .hud-left { left: clamp(22px, 7vw, 108px); }
-    .hud-right { right: clamp(22px, 7vw, 108px); text-align: right; background: linear-gradient(270deg, rgba(4, 32, 52, .72), transparent); }
+    .hud-right { right: clamp(22px, 7vw, 108px); text-align: right; background: linear-gradient(270deg, rgba(4, 32, 52, .72), transparent); animation-delay: -1.7s; }
     .hud-right .hud-line i { margin-left: auto; }
 
     .eyebrow {
@@ -273,6 +395,58 @@
     .reactor-wrap:focus-visible .reactor { outline: 2px solid white; outline-offset: 8px; }
     .reactor-wrap:disabled { cursor: not-allowed; }
     .reactor-wrap:disabled:not(.sequence-active):not(.launch-locked) .reactor { filter: saturate(.55) brightness(.72); }
+    .reactor-halo {
+      position: absolute;
+      inset: -9%;
+      border-radius: 50%;
+      border: 1px solid rgba(49,216,255,.08);
+      background: repeating-conic-gradient(from 0deg, rgba(49,216,255,.36) 0 1deg, transparent 1deg 12deg);
+      -webkit-mask: radial-gradient(circle, transparent 67%, #000 68% 69%, transparent 70%);
+      mask: radial-gradient(circle, transparent 67%, #000 68% 69%, transparent 70%);
+      animation: spin 34s linear infinite;
+      pointer-events: none;
+    }
+    .scanner-wedge {
+      position: absolute;
+      z-index: 1;
+      inset: 4%;
+      border-radius: 50%;
+      opacity: .45;
+      background: conic-gradient(from 0deg, transparent 0 80%, rgba(49,216,255,.18) 93%, rgba(255,255,255,.55) 99%, transparent 100%);
+      -webkit-mask: radial-gradient(circle, transparent 0 48%, #000 49% 50%, transparent 67%, #000 68% 69%, transparent 70%);
+      mask: radial-gradient(circle, transparent 0 48%, #000 49% 50%, transparent 67%, #000 68% 69%, transparent 70%);
+      animation: spin 3.8s linear infinite;
+      pointer-events: none;
+    }
+    .shockwave-field { position: absolute; inset: 28%; z-index: 0; pointer-events: none; }
+    .shockwave-field i { position: absolute; inset: 0; border: 1px solid var(--cyan); border-radius: 50%; opacity: 0; }
+    .axis-ring {
+      position: absolute;
+      z-index: 1;
+      left: 2%;
+      top: 40%;
+      width: 96%;
+      height: 20%;
+      border: 1px solid rgba(49,216,255,.25);
+      border-radius: 50%;
+      box-shadow: 0 0 14px rgba(49,216,255,.11), inset 0 0 14px rgba(49,216,255,.08);
+      pointer-events: none;
+    }
+    .axis-ring.one { animation: axisOrbitA 8s linear infinite; }
+    .axis-ring.two { animation: axisOrbitB 11s linear infinite reverse; }
+    .axis-ring.three { animation: axisOrbitC 14s linear infinite; }
+    .holo-blades {
+      position: absolute;
+      z-index: 0;
+      inset: -3%;
+      border-radius: 50%;
+      opacity: .42;
+      background: repeating-conic-gradient(from 0deg, rgba(49,216,255,.7) 0 2deg, transparent 2deg 17deg);
+      -webkit-mask: radial-gradient(circle, transparent 72%, #000 73% 74%, transparent 75%);
+      mask: radial-gradient(circle, transparent 72%, #000 73% 74%, transparent 75%);
+      animation: spin 22s linear infinite reverse;
+      pointer-events: none;
+    }
     .orbit {
       position: absolute;
       inset: 2%;
@@ -280,7 +454,7 @@
       border-radius: 50%;
       animation: spin 13s linear infinite;
     }
-    .orbit:nth-child(2) { inset: 12%; border-style: dashed; animation-duration: 19s; animation-direction: reverse; }
+    .orbit-inner { inset: 12%; border-style: dashed; animation-duration: 19s; animation-direction: reverse; }
     .orbit i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 13px var(--cyan); }
     .orbit i:nth-child(1) { left: 50%; top: -3px; }
     .orbit i:nth-child(2) { left: 8%; bottom: 18%; }
@@ -367,10 +541,20 @@
     .particle-field i:nth-child(5) { transform: translate(-195px, 195px); animation-delay: .8s; }
     .particle-field i:nth-child(6) { transform: translate(195px, 210px); animation-delay: 1s; }
 
-    .copy { min-height: 98px; margin-top: 7px; }
+    .copy { min-height: 98px; margin-top: 7px; transition: opacity .36s ease, transform .48s cubic-bezier(.2,.8,.2,1), filter .36s ease; }
     .copy p { margin: 0 0 5px; color: var(--cyan); font-size: 9px; font-weight: 900; letter-spacing: .27em; }
-    .copy h1 { margin: 0; font-size: clamp(31px, 4vw, 57px); line-height: .98; text-transform: uppercase; letter-spacing: -.035em; text-shadow: 0 0 28px rgba(49, 216, 255, .18); }
+    .copy h1 { position: relative; margin: 0; font-size: clamp(31px, 4vw, 57px); line-height: .98; text-transform: uppercase; letter-spacing: -.035em; text-shadow: 0 0 28px rgba(49, 216, 255, .18); }
+    .copy h1::before, .copy h1::after { content: none; position: absolute; inset: 0; pointer-events: none; }
     .copy span { display: block; max-width: 540px; margin: 9px auto 0; color: #8ca8ba; font-size: 11px; line-height: 1.5; }
+    .core-kicker, .core-label, .core-status { transition: opacity .32s ease, transform .42s cubic-bezier(.2,.8,.2,1), filter .32s ease; }
+    .copy.completion-transition { opacity: 0; transform: translateY(11px) scale(.985); filter: blur(5px); }
+    .reactor-wrap.completion-transition .core-kicker,
+    .reactor-wrap.completion-transition .core-label,
+    .reactor-wrap.completion-transition .core-status { opacity: 0; transform: translateY(8px) scale(.96); filter: blur(4px); }
+    .copy.completion-arrival { animation: completionCopyIn .78s cubic-bezier(.16,.82,.24,1) both; }
+    .reactor-wrap.completion-arrival .core-kicker,
+    .reactor-wrap.completion-arrival .core-label,
+    .reactor-wrap.completion-arrival .core-status { animation: completionCoreIn .7s cubic-bezier(.16,.82,.24,1) both; }
 
     .stage-dots { display: flex; gap: 9px; }
     .stage-dots span { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid rgba(70, 171, 204, .25); color: #527287; font: 700 8px ui-monospace, monospace; transform: rotate(45deg); transition: .3s; }
@@ -383,16 +567,58 @@
     .launch-flash { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 43%, rgba(255,255,255,.95), rgba(49,216,255,.38) 16%, rgba(145,223,63,.15) 29%, transparent 56%); }
 
     body.stage-countdown .orbit { animation-duration: 2.2s; }
-    body.stage-countdown .orbit:nth-child(2) { animation-duration: 1.7s; }
+    body.stage-countdown .orbit-inner { animation-duration: 1.7s; }
     body.stage-charging .orbit { animation-duration: .72s; }
-    body.stage-charging .orbit:nth-child(2) { animation-duration: .48s; }
+    body.stage-charging .orbit-inner { animation-duration: .48s; }
     body.stage-countdown .energy-ring { animation-duration: 1.1s; opacity: .95; }
     body.stage-charging .energy-ring { animation-duration: .32s; filter: drop-shadow(0 0 17px var(--cyan)); }
+    body.stage-countdown .scanner-wedge { animation-duration: 1.25s; opacity: .85; }
+    body.stage-countdown .axis-ring.one { animation-duration: 2.5s; }
+    body.stage-countdown .axis-ring.two { animation-duration: 3.2s; }
+    body.stage-countdown .axis-ring.three { animation-duration: 3.8s; }
+    body.stage-charging .scanner-wedge { animation-duration: .24s; opacity: 1; filter: drop-shadow(0 0 13px var(--cyan)); }
+    body.stage-charging .axis-ring { border-color: rgba(255,255,255,.7); box-shadow: 0 0 24px var(--cyan); }
+    body.stage-charging .axis-ring.one { animation-duration: .7s; }
+    body.stage-charging .axis-ring.two { animation-duration: .9s; }
+    body.stage-charging .axis-ring.three { animation-duration: 1.1s; }
+    body.stage-countdown .floor-grid { animation-duration: 2.1s; }
+    body.stage-charging .floor-grid { animation-duration: .7s; opacity: .9; }
+    body.stage-countdown .energy-beam { opacity: .28; animation: beamCharge 1.2s ease-in-out infinite alternate; }
+    body.stage-charging .energy-beam { opacity: .9; animation: beamCharge .22s ease-in-out infinite alternate; }
     body.stage-countdown .core, body.stage-charging .core { animation: charge .34s ease-in-out infinite alternate; }
-    body.stage-ignition .reactor-wrap { animation: ignitionKick .85s cubic-bezier(.2,.9,.2,1) both; }
+    body.stage-charging main { animation: microShake .13s linear infinite; }
+    body.stage-ignition main { animation: screenKick .95s cubic-bezier(.2,.9,.2,1) both; }
+    body.stage-ignition .lens-flare { animation: flareDetonate 1.45s ease-out both; }
+    body.stage-ignition .chromatic-flash { animation: chromaticSplit .9s steps(2, end) both; }
+    body.stage-ignition .viewport-frame { animation: frameBlast 1.2s ease-out both; }
+    body.stage-ignition .copy h1::before, body.stage-ignition .copy h1::after { content: attr(data-text); }
+    body.stage-ignition .copy h1::before { color: var(--cyan); transform: translateX(-4px); clip-path: inset(0 0 55% 0); animation: titleGlitchA .55s steps(2,end) 2; }
+    body.stage-ignition .copy h1::after { color: var(--green); transform: translateX(4px); clip-path: inset(48% 0 0 0); animation: titleGlitchB .46s steps(2,end) 2; }
+    body.stage-ignition .reactor-wrap { animation: ignitionKick .95s cubic-bezier(.2,.9,.2,1) both; }
+    body.stage-ignition .reactor-halo { animation: haloBurst 1.35s ease-out both; }
+    body.stage-ignition .scanner-wedge { animation-duration: .12s; opacity: 1; }
+    body.stage-ignition .energy-beam { opacity: 1; animation: beamIgnite 1.2s ease-out both; }
+    body.stage-ignition .shockwave-field i { animation: reactorWave 1.45s ease-out both; }
+    body.stage-ignition .shockwave-field i:nth-child(2) { animation-delay: .14s; }
+    body.stage-ignition .shockwave-field i:nth-child(3) { animation-delay: .28s; }
+    body.stage-ignition .shockwave-field i:nth-child(4) { animation-delay: .42s; }
+    body.stage-ignition .logo-card { animation: logoIgnite 1.25s cubic-bezier(.16,.9,.22,1) both; }
+    body.stage-ignition .holo-blades { animation-duration: .25s; opacity: 1; filter: drop-shadow(0 0 14px white); }
     body.stage-ignition .spark-wheel i { animation: sparkBurst 1.15s ease-out both; }
     body.stage-ignition .spark-wheel i:nth-child(even) { animation-delay: .08s; }
-    body.stage-ignition .core, body.stage-complete .core { background: radial-gradient(circle at 38% 30%, #fff, #e1ff9f 18%, #91df3f 44%, #17420f 77%); box-shadow: 0 0 40px rgba(145,223,63,1), 0 0 120px rgba(145,223,63,.7), 0 0 185px rgba(49,216,255,.28); }
+    body.stage-ignition .core, body.stage-settling .core, body.stage-complete .core { background: radial-gradient(circle at 38% 30%, #fff, #e1ff9f 18%, #91df3f 44%, #17420f 77%); box-shadow: 0 0 40px rgba(145,223,63,1), 0 0 120px rgba(145,223,63,.7), 0 0 185px rgba(49,216,255,.28); }
+    body.stage-settling .reactor-wrap { animation: settleCore .8s cubic-bezier(.18,.8,.22,1) both; }
+    body.stage-settling .orbit { animation-duration: 3.1s; }
+    body.stage-settling .orbit-inner { animation-duration: 4.2s; }
+    body.stage-settling .energy-ring { animation-duration: 1.35s; filter: drop-shadow(0 0 13px var(--green)); }
+    body.stage-settling .axis-ring { border-color: rgba(145,223,63,.42); box-shadow: 0 0 18px rgba(145,223,63,.24); }
+    body.stage-settling .axis-ring.one { animation-duration: 2.2s; }
+    body.stage-settling .axis-ring.two { animation-duration: 3s; }
+    body.stage-settling .axis-ring.three { animation-duration: 4s; }
+    body.stage-settling .pulse { border-color: var(--green); animation: wave 2.1s ease-out infinite; }
+    body.stage-settling .pulse.two { animation-delay: 1.05s; }
+    body.stage-settling .energy-beam { opacity: .13; transition: opacity .7s ease; }
+    body.stage-settling .holo-blades { animation-duration: 3.2s; opacity: .65; background: repeating-conic-gradient(from 0deg, rgba(145,223,63,.72) 0 2deg, transparent 2deg 17deg); }
     body.stage-complete .energy-ring { background: conic-gradient(from 0deg, transparent 0 10%, var(--green) 12% 21%, transparent 23% 46%, #fff 49% 53%, transparent 56% 78%, var(--green) 81% 89%, transparent 92%); filter: drop-shadow(0 0 10px var(--green)); }
     body.stage-ignition .pulse, body.stage-complete .pulse { border-color: var(--green); animation: wave 1.4s ease-out infinite; }
     body.stage-ignition .pulse.two, body.stage-complete .pulse.two { animation-delay: .7s; }
@@ -401,6 +627,20 @@
     body.stage-complete .copy h1 { color: #efffd8; text-shadow: 0 0 36px rgba(145,223,63,.48); }
     body.stage-complete .hud-line i { width: 100%; background: var(--green); box-shadow: 0 0 10px var(--green); }
     body.stage-complete .hud small { color: var(--green); }
+    body.stage-complete .aurora-field i { opacity: .17; background: var(--green); }
+    body.stage-complete .scanner-wedge { background: conic-gradient(from 0deg, transparent 0 80%, rgba(145,223,63,.13) 93%, rgba(255,255,255,.52) 99%, transparent 100%); animation-duration: 2.2s; }
+    body.stage-complete .reactor-halo { background: repeating-conic-gradient(from 0deg, rgba(145,223,63,.5) 0 1deg, transparent 1deg 12deg); animation-duration: 18s; }
+    body.stage-complete .shockwave-field i { border-color: var(--green); animation: reactorWave 2.8s ease-out infinite; }
+    body.stage-complete .shockwave-field i:nth-child(2) { animation-delay: .7s; }
+    body.stage-complete .shockwave-field i:nth-child(3) { animation-delay: 1.4s; }
+    body.stage-complete .shockwave-field i:nth-child(4) { animation-delay: 2.1s; }
+    body.stage-complete .logo-card { filter: drop-shadow(0 0 24px rgba(145,223,63,.28)); }
+    body.stage-complete .axis-ring { border-color: rgba(145,223,63,.34); box-shadow: 0 0 18px rgba(145,223,63,.18); }
+    body.stage-complete .axis-ring.one { animation-duration: 5s; }
+    body.stage-complete .axis-ring.two { animation-duration: 7s; }
+    body.stage-complete .axis-ring.three { animation-duration: 9s; }
+    body.stage-complete .holo-blades { background: repeating-conic-gradient(from 0deg, rgba(145,223,63,.75) 0 2deg, transparent 2deg 17deg); animation-duration: 12s; }
+    body.stage-complete .viewport-frame i::before, body.stage-complete .viewport-frame i::after { background: var(--green); box-shadow: 0 0 12px var(--green); }
 
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes breathe { 50% { transform: scale(1.09); filter: brightness(1.35); } }
@@ -412,6 +652,33 @@
     @keyframes twinkle { to { opacity: .95; filter: brightness(1.5); } }
     @keyframes blink { 50% { opacity: .25; } }
     @keyframes scanPage { from { top: -2px; } to { top: 100%; } }
+    @keyframes auroraDrift { to { transform: translate(16vw, 8vh) scale(1.18); opacity: .18; } }
+    @keyframes dataFall { from { transform: translateY(-20vh); } to { transform: translateY(145vh); } }
+    @keyframes gridCruise { to { background-position: 0 72px, 72px 0; } }
+    @keyframes logoFloat { to { transform: translateY(-9px) rotate(.7deg); filter: drop-shadow(0 0 24px rgba(49,216,255,.23)); } }
+    @keyframes hudHover { to { transform: translateY(-5px); border-top-color: rgba(49,216,255,.75); } }
+    @keyframes meterFlux { from { width: 38%; opacity: .55; } to { width: 94%; opacity: 1; } }
+    @keyframes ghostTick { 0% { opacity: 0; transform: translate(-50%, -50%) scale(1.42); filter: blur(14px); } 20% { opacity: .7; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(.82); filter: blur(0); } }
+    @keyframes ghostBlast { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.35); filter: blur(18px); } 22% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.8); filter: blur(2px); } }
+    @keyframes liveFloat { from { opacity: 0; transform: translate(-50%, -48%) scale(.88); filter: blur(9px); } to { opacity: 1; transform: translate(-50%, -52%) scale(1.03); filter: drop-shadow(0 0 60px rgba(145,223,63,.25)); } }
+    @keyframes beamCharge { from { transform: translateX(-50%) scaleX(.4) scaleY(.6); filter: brightness(.7); } to { transform: translateX(-50%) scaleX(2.5) scaleY(1.08); filter: brightness(1.8); } }
+    @keyframes beamIgnite { 0% { transform: translateX(-50%) scaleX(.2) scaleY(.1); } 25% { transform: translateX(-50%) scaleX(10) scaleY(1.2); } 100% { transform: translateX(-50%) scaleX(.8) scaleY(1); opacity: .15; } }
+    @keyframes microShake { 25% { transform: translate(.7px, -.6px); } 75% { transform: translate(-.6px, .7px); } }
+    @keyframes screenKick { 0%, 100% { transform: none; } 15% { transform: translate(-5px, 2px); } 28% { transform: translate(5px, -2px); } 42% { transform: translate(-3px, -1px); } 58% { transform: translate(2px, 1px); } }
+    @keyframes haloBurst { 0% { transform: scale(.7) rotate(0); opacity: 0; } 28% { opacity: 1; } 100% { transform: scale(1.8) rotate(160deg); opacity: .1; } }
+    @keyframes reactorWave { 0% { transform: scale(.3); opacity: .95; box-shadow: 0 0 20px currentColor; } 100% { transform: scale(5.2); opacity: 0; } }
+    @keyframes axisOrbitA { from { transform: rotate(0deg) rotateX(66deg); } to { transform: rotate(360deg) rotateX(66deg); } }
+    @keyframes axisOrbitB { from { transform: rotate(62deg) rotateX(72deg); } to { transform: rotate(422deg) rotateX(72deg); } }
+    @keyframes axisOrbitC { from { transform: rotate(122deg) rotateX(78deg); } to { transform: rotate(482deg) rotateX(78deg); } }
+    @keyframes flareDetonate { 0% { opacity: 0; transform: scaleX(.1); } 16% { opacity: 1; transform: scaleX(1); } 48% { opacity: .62; } 100% { opacity: 0; transform: scaleX(1.7); } }
+    @keyframes chromaticSplit { 0% { opacity: 0; transform: scale(.7); } 18% { opacity: 1; transform: scale(1.05); } 42% { transform: translateX(5px) scale(1.16); } 68% { transform: translateX(-3px) scale(1.08); } 100% { opacity: 0; transform: scale(1.35); } }
+    @keyframes frameBlast { 0% { opacity: .4; transform: scale(1); } 20% { opacity: 1; transform: scale(.97); } 100% { opacity: .25; transform: scale(1.06); } }
+    @keyframes titleGlitchA { 0%,100% { transform: translateX(-4px); opacity: .85; } 35% { transform: translate(7px,-2px); } 70% { transform: translate(-9px,2px); opacity: .35; } }
+    @keyframes titleGlitchB { 0%,100% { transform: translateX(4px); opacity: .72; } 40% { transform: translate(-7px,2px); } 75% { transform: translate(10px,-1px); opacity: .3; } }
+    @keyframes logoIgnite { 0% { opacity: .35; transform: scale(.82) translateY(12px); filter: blur(6px) brightness(2.4); } 35% { opacity: 1; transform: scale(1.1) translateY(-8px); filter: blur(0) brightness(2); } 100% { transform: scale(1); filter: drop-shadow(0 0 28px rgba(145,223,63,.42)); } }
+    @keyframes settleCore { 0% { transform: scale(1.04); filter: brightness(1.5); } 55% { transform: scale(.985); filter: brightness(.92); } 100% { transform: scale(1); filter: brightness(1); } }
+    @keyframes completionCopyIn { 0% { opacity: 0; transform: translateY(-9px) scale(1.018); filter: blur(7px); } 55% { opacity: 1; } 100% { opacity: 1; transform: none; filter: blur(0); } }
+    @keyframes completionCoreIn { 0% { opacity: 0; transform: translateY(-8px) scale(1.08); filter: blur(6px) brightness(1.8); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; filter: blur(0) brightness(1); } }
 
     @media (max-width: 940px) {
       .logo-card, .hud { display: none; }
@@ -426,6 +693,7 @@
       .reactor-wrap { width: min(270px, 34vh); height: min(270px, 34vh); }
       .copy h1 { font-size: clamp(29px, 9vw, 42px); }
       .copy span { max-width: 350px; font-size: 10px; }
+      .viewport-frame { inset: 88px 12px 68px; opacity: .24; }
     }
 
     @media (max-height: 700px) and (min-width: 721px) {
@@ -447,6 +715,12 @@
 <body class="stage-ready">
   <div class="noise"></div>
   <div class="scanline"></div>
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
+  <div class="aurora-field" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="data-streams" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="viewport-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="lens-flare" aria-hidden="true"></div>
+  <div class="chromatic-flash" aria-hidden="true"></div>
 
   <header class="topbar">
     <div class="system-brand"><strong>ICGSCE-IPET</strong><span>OFFICIAL LAUNCH 2026</span></div>
@@ -460,18 +734,27 @@
   <main>
     <div class="floor-grid"></div>
     <div class="launch-flash"></div>
+    <div class="energy-beam" aria-hidden="true"></div>
+    <div id="countdownGhost" class="countdown-ghost" aria-hidden="true"></div>
     <div class="particle-field" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
     <aside class="logo-card logo-one"><img src="images/logo1.png" alt="ICGSCE 2026 official logo"></aside>
     <aside class="logo-card logo-two"><img src="images/logo2.png" alt="IPET 2026 official logo"></aside>
 
-    <aside class="hud hud-left" aria-hidden="true">ENERGY MATRIX<strong id="matrixState">READY</strong><span class="hud-line"><i></i></span><small>STABILITY 100%</small></aside>
+    <aside class="hud hud-left" aria-hidden="true">ENERGY MATRIX<strong id="matrixState">READY</strong><span class="hud-line"><i></i></span><small id="matrixMetric">STABILITY 100%</small></aside>
     <aside class="hud hud-right" aria-hidden="true">OUTPUT CHANNEL<strong>GPIO 22</strong><span class="hud-line"><i></i></span><small id="relayState">LINK SECURE</small></aside>
 
     <div class="eyebrow">OFFICIATION CONTROL</div>
     <button id="launchButton" class="reactor-wrap" type="button" aria-label="Touch to ignite official launch" disabled>
-      <div class="orbit"><i></i><i></i><i></i></div>
-      <div class="orbit"><i></i><i></i><i></i></div>
+      <div class="reactor-halo" aria-hidden="true"></div>
+      <div class="scanner-wedge" aria-hidden="true"></div>
+      <div class="holo-blades" aria-hidden="true"></div>
+      <div class="axis-ring one" aria-hidden="true"></div>
+      <div class="axis-ring two" aria-hidden="true"></div>
+      <div class="axis-ring three" aria-hidden="true"></div>
+      <div class="orbit orbit-outer"><i></i><i></i><i></i></div>
+      <div class="orbit orbit-inner"><i></i><i></i><i></i></div>
+      <div class="shockwave-field" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       <div class="spark-wheel" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="pulse"></div><div class="pulse two"></div>
       <div class="reactor">
@@ -498,20 +781,217 @@
   </footer>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
-    import { firebaseConfig } from "./firebase-config.js";
-
     const $ = (id) => document.getElementById(id);
-    const classes = ["stage-ready", "stage-countdown", "stage-charging", "stage-ignition", "stage-complete"];
-    let fired = false;
+    const demoMode = new URLSearchParams(window.location.search).get("demo") === "1";
+    const classes = ["stage-ready", "stage-countdown", "stage-charging", "stage-ignition", "stage-settling", "stage-complete"];
+    let relayIsOn = false;
+    let sequenceBusy = false;
     let firebaseOnline = false;
     let deviceOnline = false;
     let lastSeen = 0;
     let database = null;
+    let ref = null;
+    let set = null;
+    let serverTimestamp = null;
     let sequenceTimers = [];
+    let fxStage = "ready";
+
+    const fxCanvas = $("fxCanvas");
+    const fx = fxCanvas.getContext("2d", { alpha: true });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let fxWidth = window.innerWidth;
+    let fxHeight = window.innerHeight;
+    let ambientParticles = [];
+    let burstParticles = [];
+    let canvasRings = [];
+    let telemetryFrame = null;
+
+    function createAmbientParticle(initial = false) {
+      return {
+        x: Math.random() * fxWidth,
+        y: initial ? Math.random() * fxHeight : fxHeight + Math.random() * 80,
+        size: .6 + Math.random() * 1.9,
+        speed: .16 + Math.random() * .62,
+        drift: Math.random() * Math.PI * 2,
+        alpha: .16 + Math.random() * .7
+      };
+    }
+
+    function moveParticleToEdge(particle) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.hypot(fxWidth, fxHeight) * (.48 + Math.random() * .18);
+      particle.x = fxWidth * .5 + Math.cos(angle) * radius;
+      particle.y = fxHeight * .445 + Math.sin(angle) * radius;
+      particle.drift = Math.random() * Math.PI * 2;
+    }
+
+    function resizeFx() {
+      fxWidth = window.innerWidth;
+      fxHeight = window.innerHeight;
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.6);
+      fxCanvas.width = Math.floor(fxWidth * ratio);
+      fxCanvas.height = Math.floor(fxHeight * ratio);
+      fxCanvas.style.width = fxWidth + "px";
+      fxCanvas.style.height = fxHeight + "px";
+      fx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const particleCount = fxWidth < 760 ? 34 : 68;
+      ambientParticles = Array.from({ length: particleCount }, () => createAmbientParticle(true));
+    }
+
+    function burstEnergy(amount = 74) {
+      if (reduceMotion) return;
+      const originX = fxWidth * .5;
+      const originY = fxHeight * .445;
+      for (let index = 0; index < amount; index++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2.2 + Math.random() * 10.5;
+        burstParticles.push({
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          drag: .955 + Math.random() * .025,
+          size: 1 + Math.random() * 2.8,
+          life: 48 + Math.random() * 52,
+          maxLife: 100,
+          green: Math.random() > .46
+        });
+      }
+      if (amount > 70) {
+        canvasRings.push(
+          { radius: 18, speed: 10, life: 1, width: 3 },
+          { radius: 12, speed: 7, life: .82, width: 2 },
+          { radius: 8, speed: 4.8, life: .66, width: 1 }
+        );
+      }
+    }
+
+    function drawEnergyArcs(time, centerX, centerY) {
+      const arcCount = fxStage === "ignition" ? 7 : fxStage === "charging" ? 4 : fxStage === "countdown" || fxStage === "settling" ? 2 : fxStage === "complete" ? 1 : 0;
+      if (!arcCount) return;
+      fx.save();
+      fx.lineCap = "round";
+      fx.shadowBlur = fxStage === "ignition" ? 20 : 11;
+      for (let arc = 0; arc < arcCount; arc++) {
+        const angle = time * .0014 * (arc % 2 ? 1 : -1) + arc * (Math.PI * 2 / arcCount);
+        const startRadius = Math.min(fxWidth, fxHeight) * .075;
+        const endRadius = Math.min(fxWidth, fxHeight) * (.18 + (arc % 3) * .025);
+        const normalX = -Math.sin(angle);
+        const normalY = Math.cos(angle);
+        fx.beginPath();
+        for (let step = 0; step <= 10; step++) {
+          const progress = step / 10;
+          const radius = startRadius + (endRadius - startRadius) * progress;
+          const jitter = Math.sin(time * .026 + arc * 5.7 + step * 9.2) * 13 * Math.sin(progress * Math.PI);
+          const x = centerX + Math.cos(angle) * radius + normalX * jitter;
+          const y = centerY + Math.sin(angle) * radius + normalY * jitter;
+          if (step === 0) fx.moveTo(x, y); else fx.lineTo(x, y);
+        }
+        const greenArc = fxStage === "complete" || fxStage === "settling" || (fxStage === "ignition" && arc % 2);
+        fx.strokeStyle = greenArc ? "rgba(145,223,63,.78)" : "rgba(119,232,255,.82)";
+        fx.shadowColor = greenArc ? "#91df3f" : "#32d9ff";
+        fx.lineWidth = fxStage === "ignition" ? 1.5 : .8;
+        fx.stroke();
+      }
+      fx.restore();
+    }
+
+    function drawFx(time) {
+      fx.clearRect(0, 0, fxWidth, fxHeight);
+      const speedMap = { ready: .7, countdown: 2, charging: 5.2, ignition: 9, settling: 2.1, complete: 1.3 };
+      const multiplier = speedMap[fxStage] || 1;
+      const activeColor = fxStage === "complete" || fxStage === "settling" ? "145,223,63" : "49,216,255";
+      const centerX = fxWidth * .5;
+      const centerY = fxHeight * .445;
+      const imploding = fxStage === "countdown" || fxStage === "charging";
+
+      fx.save();
+      fx.globalCompositeOperation = "lighter";
+      ambientParticles.forEach((particle, index) => {
+        let tailX = particle.x;
+        let tailY = particle.y + particle.speed * multiplier * 2;
+        if (imploding) {
+          const dx = centerX - particle.x;
+          const dy = centerY - particle.y;
+          const distance = Math.max(1, Math.hypot(dx, dy));
+          const pull = particle.speed * multiplier * 1.05;
+          const moveX = dx / distance * pull - dy / distance * .075 * multiplier;
+          const moveY = dy / distance * pull + dx / distance * .075 * multiplier;
+          particle.x += moveX;
+          particle.y += moveY;
+          tailX = particle.x - moveX * 7;
+          tailY = particle.y - moveY * 7;
+          if (distance < Math.min(fxWidth, fxHeight) * .105) moveParticleToEdge(particle);
+        } else {
+          particle.y -= particle.speed * multiplier;
+          particle.x += Math.sin(time * .0007 + particle.drift + index) * .18 * multiplier;
+          if (particle.y < -30 || particle.x < -30 || particle.x > fxWidth + 30) Object.assign(particle, createAmbientParticle());
+        }
+        const streak = Math.max(1, particle.speed * multiplier * (fxStage === "charging" || fxStage === "ignition" ? 6 : 1.8));
+        const gradient = fx.createLinearGradient(particle.x, particle.y, tailX, tailY + (imploding ? 0 : streak));
+        gradient.addColorStop(0, `rgba(${activeColor},${particle.alpha})`);
+        gradient.addColorStop(1, `rgba(${activeColor},0)`);
+        fx.strokeStyle = gradient;
+        fx.lineWidth = particle.size;
+        fx.beginPath();
+        fx.moveTo(particle.x, particle.y);
+        fx.lineTo(tailX, tailY + (imploding ? 0 : streak));
+        fx.stroke();
+      });
+
+      drawEnergyArcs(time, centerX, centerY);
+
+      burstParticles = burstParticles.filter((particle) => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vx *= particle.drag;
+        particle.vy *= particle.drag;
+        particle.life -= 1;
+        if (particle.life <= 0) return false;
+        const alpha = Math.min(1, particle.life / 30);
+        fx.strokeStyle = particle.green ? `rgba(145,223,63,${alpha})` : `rgba(255,255,255,${alpha})`;
+        fx.lineWidth = particle.size;
+        fx.beginPath();
+        fx.moveTo(particle.x, particle.y);
+        fx.lineTo(particle.x - particle.vx * 3.5, particle.y - particle.vy * 3.5);
+        fx.stroke();
+        return true;
+      });
+
+      canvasRings = canvasRings.filter((ring) => {
+        ring.radius += ring.speed;
+        ring.speed *= .985;
+        ring.life -= .018;
+        if (ring.life <= 0) return false;
+        fx.beginPath();
+        fx.arc(centerX, centerY, ring.radius, 0, Math.PI * 2);
+        fx.strokeStyle = `rgba(145,223,63,${ring.life})`;
+        fx.lineWidth = ring.width;
+        fx.shadowColor = "#91df3f";
+        fx.shadowBlur = 22;
+        fx.stroke();
+        return true;
+      });
+      fx.restore();
+
+      if (!reduceMotion) requestAnimationFrame(drawFx);
+    }
+
+    function triggerGhost(text, mode = "tick") {
+      const ghost = $("countdownGhost");
+      ghost.classList.remove("tick", "blast", "live");
+      ghost.textContent = text;
+      void ghost.offsetWidth;
+      if (text) ghost.classList.add(mode);
+    }
+
+    resizeFx();
+    window.addEventListener("resize", resizeFx, { passive: true });
+    if (!reduceMotion) requestAnimationFrame(drawFx);
 
     function setBodyStage(stage) {
+      fxStage = stage;
+      if (document.body.classList.contains("stage-" + stage)) return;
       document.body.classList.remove(...classes);
       document.body.classList.add("stage-" + stage);
     }
@@ -519,6 +999,7 @@
     function setCopy(label, title, detail) {
       $("stageLabel").textContent = label;
       $("stageTitle").textContent = title;
+      $("stageTitle").dataset.text = title;
       $("stageDetail").textContent = detail;
     }
 
@@ -527,7 +1008,7 @@
       $("deviceText").textContent = text;
     }
 
-    function connectionReady() { return firebaseOnline && deviceOnline; }
+    function connectionReady() { return demoMode || (firebaseOnline && deviceOnline); }
 
     function activateStageDot(number) {
       for (let index = 1; index <= 3; index++) {
@@ -539,60 +1020,122 @@
       for (let index = 1; index <= 3; index++) $("dot" + index).classList.remove("active");
     }
 
+    function clearSequenceTimers() {
+      sequenceTimers.forEach(clearTimeout);
+      sequenceTimers = [];
+      if (telemetryFrame) cancelAnimationFrame(telemetryFrame);
+      telemetryFrame = null;
+    }
+
+    function startTelemetry() {
+      const startedAt = performance.now();
+      const updateTelemetry = (now) => {
+        if (!sequenceBusy) return;
+        const progress = Math.min(100, Math.round((now - startedAt) / 36));
+        $("matrixState").textContent = progress < 35 ? "SYNC " + progress + "%" : progress < 82 ? "CHARGE " + progress + "%" : "CRITICAL " + progress + "%";
+        $("matrixMetric").textContent = "CORE ENERGY " + progress + "%";
+        telemetryFrame = requestAnimationFrame(updateTelemetry);
+      };
+      telemetryFrame = requestAnimationFrame(updateTelemetry);
+    }
+
+    function clearCompletionTransition() {
+      const copy = document.querySelector(".copy");
+      copy.classList.remove("completion-transition", "completion-arrival");
+      $("launchButton").classList.remove("completion-transition", "completion-arrival");
+    }
+
+    function beginCompletionTransition() {
+      if (!sequenceBusy) return;
+      setBodyStage("settling");
+      $("matrixState").textContent = "STABILISING";
+      $("matrixMetric").textContent = "ENERGY LOCK 100%";
+      document.querySelector(".copy").classList.add("completion-transition");
+      $("launchButton").classList.add("completion-transition");
+    }
+
     function showReady() {
-      if (fired) return;
+      relayIsOn = false;
+      sequenceBusy = false;
+      clearSequenceTimers();
+      clearCompletionTransition();
       setBodyStage("ready");
+      triggerGhost("");
       setCopy("CEREMONIAL SYSTEM READY", "System Ready", "Touch the energy core to begin the official launch sequence.");
       $("launchButton").classList.remove("sequence-active", "launch-locked");
       $("launchButton").disabled = !connectionReady();
-      $("coreKicker").textContent = connectionReady() ? "VIP TOUCH CONTROL" : "SYSTEM LINK";
+      $("launchButton").setAttribute("aria-label", "Touch to ignite official launch");
+      $("coreKicker").textContent = demoMode ? "OFFLINE DEMONSTRATION" : (connectionReady() ? "VIP TOUCH CONTROL" : "SYSTEM LINK");
       $("coreLabel").innerHTML = "TOUCH<br>TO IGNITE";
-      $("coreStatus").textContent = connectionReady() ? "SYSTEM READY" : "WAITING FOR ESP32";
+      $("coreStatus").textContent = demoMode ? "DEMO READY" : (connectionReady() ? "SYSTEM READY" : "WAITING FOR ESP32");
       $("matrixState").textContent = "READY";
-      $("relayState").textContent = connectionReady() ? "LINK SECURE" : "AWAITING FIREBASE";
+      $("matrixMetric").textContent = "STABILITY 100%";
+      $("relayState").textContent = demoMode ? "SIMULATED" : (connectionReady() ? "LINK SECURE" : "AWAITING FIREBASE");
       clearStageDots();
     }
 
     function showComplete(fromDeviceStatus) {
-      fired = true;
-      sequenceTimers.forEach(clearTimeout);
-      sequenceTimers = [];
+      const copy = document.querySelector(".copy");
+      const animateArrival = !fromDeviceStatus && copy.classList.contains("completion-transition");
+      relayIsOn = true;
+      sequenceBusy = false;
+      clearSequenceTimers();
       setBodyStage("complete");
-      setCopy("OFFICIAL LAUNCH CONFIRMED", "ICGSCE-IPET 2026", "A new chapter in global sustainability begins now.");
-      $("launchButton").disabled = true;
+      if (!$("countdownGhost").classList.contains("live")) triggerGhost("LIVE", "live");
+      setCopy(
+        demoMode ? "DEMONSTRATION COMPLETE" : "OFFICIAL LAUNCH CONFIRMED",
+        "ICGSCE-IPET 2026",
+        demoMode ? "Full launch sequence completed without Firebase or ESP32. Touch the core to replay." : "GPIO 22 is active. Ceremonial output is locked ON."
+      );
+      $("launchButton").disabled = !demoMode;
+      $("launchButton").setAttribute("aria-label", demoMode ? "Replay the launch demonstration" : "Launch complete. GPIO 22 relay is locked on");
       $("launchButton").classList.remove("sequence-active");
       $("launchButton").classList.add("launch-locked");
-      $("coreKicker").textContent = "LAUNCH CONFIRMED";
-      $("coreLabel").innerHTML = "RELAY<br>LOCKED ON";
-      $("coreStatus").textContent = "GPIO 22 ACTIVE";
-      $("matrixState").textContent = "LOCKED";
-      $("relayState").textContent = "RELAY ACTIVE";
+      $("coreKicker").textContent = demoMode ? "DEMO SEQUENCE" : "RELAY ACTIVE";
+      $("coreLabel").innerHTML = demoMode ? "TAP TO<br>REPLAY" : "LAUNCH<br>COMPLETE";
+      $("coreStatus").textContent = demoMode ? "SIMULATION COMPLETE" : "GPIO 22 LOCKED ON";
+      $("matrixState").textContent = demoMode ? "COMPLETE" : "LOCKED";
+      $("matrixMetric").textContent = demoMode ? "SIMULATION 100%" : "OUTPUT STABLE 100%";
+      $("relayState").textContent = demoMode ? "NO HARDWARE" : "RELAY ACTIVE";
       activateStageDot(3);
-      setDevice("online", "RELAY ACTIVE");
+      setDevice(connectionReady() ? "online" : "error", demoMode ? "DEMO MODE" : (connectionReady() ? "RELAY ACTIVE" : "DEVICE OFFLINE"));
+      clearCompletionTransition();
+      if (animateArrival) {
+        void copy.offsetWidth;
+        copy.classList.add("completion-arrival");
+        $("launchButton").classList.add("completion-arrival");
+        setTimeout(clearCompletionTransition, 850);
+      }
       if (!fromDeviceStatus && navigator.vibrate) navigator.vibrate([70, 40, 120]);
     }
 
     function failSequence(message) {
-      fired = false;
-      sequenceTimers.forEach(clearTimeout);
-      sequenceTimers = [];
+      sequenceBusy = false;
+      clearSequenceTimers();
       setDevice("error", "FIREBASE LINK LOST");
-      showReady();
+      if (relayIsOn) showComplete(true);
+      else showReady();
       $("stageDetail").textContent = message || "The ESP32 is not reporting to Firebase.";
     }
 
+    async function sendRelayCommand() {
+      await set(ref(database, "gimmick/command"), {
+        action: "RELAY_ON",
+        nonce: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        issuedAt: serverTimestamp()
+      });
+    }
+
     async function launch() {
-      if (fired || !connectionReady()) return;
-      fired = true;
-      try {
-        await set(ref(database, "gimmick/command"), {
-          action: "RELAY_ON",
-          nonce: Date.now().toString(36) + Math.random().toString(36).slice(2),
-          issuedAt: serverTimestamp()
-        });
-      } catch (error) {
-        failSequence("Firebase could not send the launch command. Check the connection and try again.");
-        return;
+      if (sequenceBusy || relayIsOn || !connectionReady()) return;
+      sequenceBusy = true;
+      if (!demoMode) {
+        try {
+          await sendRelayCommand();
+        } catch (error) {
+          failSequence("Firebase could not send the launch command. Check the connection and try again.");
+          return;
+        }
       }
       $("launchButton").disabled = true;
       $("launchButton").classList.add("sequence-active");
@@ -602,7 +1145,9 @@
       setBodyStage("countdown");
       setCopy("LAUNCH SEQUENCE / 03", "Authority Verified", "Official command accepted. Initialising the energy core.");
       $("matrixState").textContent = "SYNC";
+      startTelemetry();
       activateStageDot(1);
+      triggerGhost("03");
       if (navigator.vibrate) navigator.vibrate(40);
 
       sequenceTimers.push(setTimeout(() => {
@@ -612,19 +1157,49 @@
         $("coreLabel").innerHTML = "CORE<br>SYNC";
         $("coreStatus").textContent = "OUTPUT RISING";
         activateStageDot(2);
+        triggerGhost("02");
       }, 1400));
 
       sequenceTimers.push(setTimeout(() => {
+        $("coreStatus").textContent = "IGNITION WINDOW OPEN";
+        triggerGhost("01");
+      }, 2800));
+
+      sequenceTimers.push(setTimeout(() => {
         setBodyStage("ignition");
-        setCopy("LAUNCH SEQUENCE / 01", "Ignition", "GPIO 22 is now active. Ceremonial output is locked ON.");
+        setCopy(
+          "LAUNCH SEQUENCE / 01",
+          "Ignition",
+          demoMode ? "Simulated ceremonial output is now active. No hardware command was sent." : "GPIO 22 is now active. Ceremonial output is locked ON."
+        );
         $("coreKicker").textContent = "IGNITION";
         $("coreLabel").innerHTML = "OUTPUT<br>ACTIVE";
-        $("coreStatus").textContent = "GPIO 22 ON";
-        $("relayState").textContent = "RELAY ACTIVE";
+        $("coreStatus").textContent = demoMode ? "SIMULATED OUTPUT" : "GPIO 22 ON";
+        $("relayState").textContent = demoMode ? "NO HARDWARE" : "RELAY ACTIVE";
+        $("matrixMetric").textContent = "ENERGY RELEASE 100%";
         activateStageDot(3);
+        triggerGhost("IGNITE", "blast");
+        burstEnergy(124);
+        if (demoMode) relayIsOn = true;
+        sequenceTimers.push(setTimeout(() => burstEnergy(68), 380));
       }, 3600));
 
-      sequenceTimers.push(setTimeout(() => showComplete(false), 7200));
+      sequenceTimers.push(setTimeout(beginCompletionTransition, 6400));
+
+      sequenceTimers.push(setTimeout(() => {
+        if (relayIsOn) showComplete(false);
+        else failSequence("The ESP32 did not confirm that GPIO 22 turned ON.");
+      }, 7200));
+    }
+
+    function handleLaunchClick() {
+      if (demoMode && relayIsOn && !sequenceBusy) {
+        showReady();
+        setDevice("online", "DEMO MODE");
+        launch();
+        return;
+      }
+      launch();
     }
 
     function updateClock() {
@@ -639,54 +1214,79 @@
       $("clock").textContent = time + " MYT";
     }
 
-    $("launchButton").addEventListener("click", launch);
+    $("launchButton").addEventListener("click", handleLaunchClick);
     setInterval(updateClock, 1000);
     updateClock();
     showReady();
-    setDevice("", "CONNECTING FIREBASE");
+    if (demoMode) {
+      firebaseOnline = true;
+      deviceOnline = true;
+      showReady();
+      setDevice("online", "DEMO MODE");
+    } else {
+      setDevice("", "CONNECTING FIREBASE");
+      startFirebase();
+    }
 
-    try {
-      if (!firebaseConfig.databaseURL || firebaseConfig.databaseURL.includes("YOUR_")) {
-        throw new Error("Firebase configuration is not set");
-      }
-      database = getDatabase(initializeApp(firebaseConfig));
+    async function startFirebase() {
+      try {
+        const [appModule, databaseModule, configModule] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"),
+          import("./firebase-config.js")
+        ]);
+        const firebaseConfig = configModule.firebaseConfig;
+        if (!firebaseConfig.databaseURL || firebaseConfig.databaseURL.includes("YOUR_")) {
+          throw new Error("Firebase configuration is not set");
+        }
+        ref = databaseModule.ref;
+        set = databaseModule.set;
+        serverTimestamp = databaseModule.serverTimestamp;
+        database = databaseModule.getDatabase(appModule.initializeApp(firebaseConfig));
 
-      onValue(ref(database, ".info/connected"), (snapshot) => {
+        databaseModule.onValue(ref(database, ".info/connected"), (snapshot) => {
         firebaseOnline = snapshot.val() === true;
-        if (!fired) showReady();
+        if (!sequenceBusy) {
+          if (relayIsOn) showComplete(true);
+          else showReady();
+        }
       });
 
-      onValue(ref(database, "gimmick/status"), (snapshot) => {
+        databaseModule.onValue(ref(database, "gimmick/status"), (snapshot) => {
         const status = snapshot.val() || {};
         lastSeen = Number(status.lastSeen || 0);
         deviceOnline = status.device === "online" && Date.now() - lastSeen < 15000;
         if (status.relay === true) {
-          if (!fired) showComplete(true);
+          relayIsOn = true;
+          if (!sequenceBusy) showComplete(true);
           else {
             $("relayState").textContent = "RELAY ACTIVE";
             $("coreStatus").textContent = "GPIO 22 ACTIVE";
             setDevice("online", "RELAY ACTIVE");
           }
-        } else if (!fired) {
+        } else if (!sequenceBusy) {
+          relayIsOn = false;
           setDevice(deviceOnline ? "online" : "", deviceOnline ? "ESP32 ONLINE" : "WAITING FOR ESP32");
           showReady();
         }
       });
 
-      setInterval(() => {
-        deviceOnline = lastSeen > 0 && Date.now() - lastSeen < 15000;
-        if (!fired) {
-          setDevice(deviceOnline && firebaseOnline ? "online" : "", deviceOnline ? "ESP32 ONLINE" : "WAITING FOR ESP32");
-          showReady();
-        }
-      }, 2000);
-    } catch (error) {
-      firebaseOnline = false;
-      deviceOnline = false;
-      setDevice("error", "ADD FIREBASE CONFIG");
-      $("coreKicker").textContent = "CONFIGURATION";
-      $("coreStatus").textContent = "FIREBASE CONFIG REQUIRED";
-      $("stageDetail").textContent = "Open firebase-config.js and paste your Firebase web configuration.";
+        setInterval(() => {
+          deviceOnline = lastSeen > 0 && Date.now() - lastSeen < 15000;
+          if (!sequenceBusy) {
+            setDevice(deviceOnline && firebaseOnline ? "online" : "", deviceOnline ? "ESP32 ONLINE" : "WAITING FOR ESP32");
+            if (relayIsOn) showComplete(true);
+            else showReady();
+          }
+        }, 2000);
+      } catch (error) {
+        firebaseOnline = false;
+        deviceOnline = false;
+        setDevice("error", "ADD FIREBASE CONFIG");
+        $("coreKicker").textContent = "CONFIGURATION";
+        $("coreStatus").textContent = "FIREBASE CONFIG REQUIRED";
+        $("stageDetail").textContent = "Open firebase-config.js and paste your Firebase web configuration.";
+      }
     }
   </script>
 </body>
