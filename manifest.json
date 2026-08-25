@@ -1,0 +1,12 @@
+{
+  "id": "./",
+  "name": "Robotronix VIP Launch Console",
+  "short_name": "VIP Launch",
+  "description": "ICGSCE-IPET 2026 ceremonial Firebase launch controller.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#020b15",
+  "theme_color": "#020b15"
+}
