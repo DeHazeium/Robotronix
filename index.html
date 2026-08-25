@@ -121,7 +121,7 @@
       font: 800 9px ui-monospace, monospace;
       letter-spacing: .11em;
       color: white;
-      cursor: pointer;
+      cursor: default;
     }
 
     .device-dot {
@@ -200,27 +200,10 @@
       top: 16%;
       z-index: 4;
       width: clamp(125px, 13vw, 182px);
-      padding: 8px;
-      border: 1px solid rgba(49, 216, 255, .28);
-      background: rgba(4, 24, 40, .76);
-      box-shadow: 0 18px 60px rgba(0, 0, 0, .35), inset 0 0 25px rgba(49, 216, 255, .05);
-      backdrop-filter: blur(12px);
     }
-    .logo-card::before, .logo-card::after {
-      content: "";
-      position: absolute;
-      width: 22px;
-      height: 8px;
-    }
-    .logo-card::before { left: -1px; top: -1px; border-left: 2px solid var(--cyan); border-top: 2px solid var(--cyan); }
-    .logo-card::after { right: -1px; bottom: -1px; border-right: 2px solid var(--cyan); border-bottom: 2px solid var(--cyan); }
     .logo-card img { display: block; width: 100%; height: clamp(100px, 12vw, 155px); object-fit: contain; }
-    .logo-card small { display: block; padding: 7px 3px 2px; color: var(--cyan-soft); font: 800 7px ui-monospace, monospace; letter-spacing: .15em; }
     .logo-one { left: clamp(22px, 6vw, 92px); }
-    .logo-one img { background: white; }
-    .logo-two { right: clamp(22px, 6vw, 92px); border-color: rgba(255, 212, 84, .28); }
-    .logo-two img { background: black; }
-    .logo-two small { color: var(--gold); }
+    .logo-two { right: clamp(22px, 6vw, 92px); }
 
     .hud {
       position: absolute;
@@ -443,7 +426,7 @@
     <div class="system-brand"><strong>ICGSCE-IPET</strong><span>OFFICIAL LAUNCH 2026</span></div>
     <div class="conference-title"><span>7TH INTERNATIONAL CONFERENCE ON</span><strong>GLOBAL SUSTAINABILITY &amp; CHEMICAL ENGINEERING</strong></div>
     <div class="device-status">
-      <button id="connectionButton" class="device-pill" type="button"><i id="deviceDot" class="device-dot"></i><span id="deviceText">CONNECT DEVICE</span></button>
+      <div class="device-pill"><i id="deviceDot" class="device-dot"></i><span id="deviceText">FIREBASE LINK</span></div>
       <span id="clock" class="clock">--:--:-- MYT</span>
     </div>
   </header>
@@ -453,8 +436,8 @@
     <div class="launch-flash"></div>
     <div class="particle-field" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
-    <aside class="logo-card logo-one"><img src="images/logo1.png" alt="ICGSCE 2026 official logo"><small>GLOBAL SUSTAINABILITY</small></aside>
-    <aside class="logo-card logo-two"><img src="images/logo2.png" alt="IPET 2026 official logo"><small>PETROLEUM &amp; ENERGY</small></aside>
+    <aside class="logo-card logo-one"><img src="images/logo1.png" alt="ICGSCE 2026 official logo"></aside>
+    <aside class="logo-card logo-two"><img src="images/logo2.png" alt="IPET 2026 official logo"></aside>
 
     <aside class="hud hud-left" aria-hidden="true">ENERGY MATRIX<strong id="matrixState">READY</strong><span class="hud-line"><i></i></span><small>STABILITY 100%</small></aside>
     <aside class="hud hud-right" aria-hidden="true">OUTPUT CHANNEL<strong>GPIO 22</strong><span class="hud-line"><i></i></span><small id="relayState">LINK SECURE</small></aside>
@@ -492,31 +475,18 @@
     <div class="date">26-28 AUGUST<strong>2026</strong></div>
   </footer>
 
-  <div id="connectionBackdrop" class="connection-backdrop">
-    <section class="connection-panel" role="dialog" aria-modal="true" aria-labelledby="connectionTitle">
-      <button id="closePanel" class="close-panel" type="button" aria-label="Close connection settings">×</button>
-      <p class="panel-kicker">HARDWARE LINK</p>
-      <h2 id="connectionTitle">Connect ESP32</h2>
-      <p class="panel-copy">Choose USB for normal GitHub Pages. Wi-Fi WebSocket is available when the page is served through regular HTTP.</p>
-      <label>ESP32 WebSocket address
-        <input id="socketAddress" value="ws://robotronix-gimmick.local:81/" spellcheck="false">
-      </label>
-      <div class="connection-actions">
-        <button id="connectWifi" class="connect-option" type="button">CONNECT WI-FI</button>
-        <button id="connectUsb" class="connect-option primary" type="button">CONNECT USB</button>
-      </div>
-      <div id="connectionNote" class="connection-note"><strong>GITHUB PAGES MODE</strong>Connect the ESP32 to this computer by USB, then choose CONNECT USB. Chrome or Edge is required for Web Serial.</div>
-    </section>
-  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+    import { firebaseConfig } from "./firebase-config.js";
 
-  <script>
     const $ = (id) => document.getElementById(id);
     const classes = ["stage-ready", "stage-countdown", "stage-charging", "stage-ignition", "stage-complete"];
-    let socket = null;
-    let serialPort = null;
-    let serialWriter = null;
-    let connectionMode = null;
     let fired = false;
+    let firebaseOnline = false;
+    let deviceOnline = false;
+    let lastSeen = 0;
+    let database = null;
     let sequenceTimers = [];
 
     function setBodyStage(stage) {
@@ -535,10 +505,7 @@
       $("deviceText").textContent = text;
     }
 
-    function connectionReady() {
-      return (connectionMode === "websocket" && socket && socket.readyState === WebSocket.OPEN) ||
-        (connectionMode === "serial" && serialWriter);
-    }
+    function connectionReady() { return firebaseOnline && deviceOnline; }
 
     function activateStageDot(number) {
       for (let index = 1; index <= 3; index++) {
@@ -562,7 +529,7 @@
       $("progress").style.display = "none";
       $("locked").style.display = "none";
       $("matrixState").textContent = "READY";
-      $("relayState").textContent = connectionReady() ? "LINK SECURE" : "AWAITING LINK";
+      $("relayState").textContent = connectionReady() ? "LINK SECURE" : "AWAITING FIREBASE";
       clearStageDots();
     }
 
@@ -587,126 +554,24 @@
       fired = false;
       sequenceTimers.forEach(clearTimeout);
       sequenceTimers = [];
-      setDevice("error", "CONNECTION LOST");
+      setDevice("error", "FIREBASE LINK LOST");
       showReady();
-      $("stageDetail").textContent = message || "ESP32 connection was lost. Reconnect before launching.";
-      $("connectionBackdrop").classList.add("open");
+      $("stageDetail").textContent = message || "The ESP32 is not reporting to Firebase.";
     }
 
-    function handleDeviceMessage(message) {
-      if (String(message).includes("STATUS:RELAY_ON")) {
-        if (!fired) showComplete(true);
-        else setDevice("online", "RELAY ACTIVE");
-      }
-    }
-
-    async function readSerial() {
-      if (!serialPort || !serialPort.readable) return;
-      const reader = serialPort.readable.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      try {
-        while (true) {
-          const result = await reader.read();
-          if (result.done) break;
-          buffer += decoder.decode(result.value, { stream: true });
-          const lines = buffer.split(/\r?\n/);
-          buffer = lines.pop() || "";
-          lines.forEach(handleDeviceMessage);
-        }
-      } finally {
-        reader.releaseLock();
-      }
-    }
-
-    async function connectUsb() {
-      if (!("serial" in navigator)) {
-        $("connectionNote").innerHTML = "<strong>USB NOT AVAILABLE</strong>Use desktop Chrome or Edge. Web Serial is not supported by this browser.";
-        return;
-      }
-
-      try {
-        $("connectUsb").disabled = true;
-        setDevice("", "SELECT USB DEVICE");
-        serialPort = await navigator.serial.requestPort();
-        await serialPort.open({ baudRate: 115200 });
-        serialWriter = serialPort.writable.getWriter();
-        connectionMode = "serial";
-        setDevice("online", "ESP32 USB ONLINE");
-        $("connectionBackdrop").classList.remove("open");
-        showReady();
-        readSerial().catch(() => {
-          if (!fired) failSequence("USB connection was lost. Reconnect the ESP32 before launching.");
-        });
-        await sendCommand("STATUS");
-      } catch (error) {
-        serialPort = null;
-        serialWriter = null;
-        connectionMode = null;
-        setDevice("error", "USB NOT CONNECTED");
-        $("connectionNote").innerHTML = "<strong>USB CONNECTION FAILED</strong>Select the ESP32 serial port and make sure Serial Monitor is closed.";
-      } finally {
-        $("connectUsb").disabled = false;
-      }
-    }
-
-    function connectWifi() {
-      const address = $("socketAddress").value.trim();
-      if (!address) return;
-
-      if (location.protocol === "https:" && address.startsWith("ws://")) {
-        setDevice("error", "BROWSER BLOCKED WI-FI");
-        $("connectionNote").innerHTML = "<strong>HTTPS SECURITY BLOCK</strong>GitHub Pages cannot open an insecure local WebSocket. Use CONNECT USB, or serve this page through regular HTTP.";
-        return;
-      }
-
-      try {
-        localStorage.setItem("robotronixSocket", address);
-        setDevice("", "CONNECTING WI-FI");
-        if (socket) socket.close();
-        socket = new WebSocket(address);
-      } catch (error) {
-        setDevice("error", "WI-FI LINK ERROR");
-        return;
-      }
-
-      socket.onopen = () => {
-        connectionMode = "websocket";
-        setDevice("online", "ESP32 WI-FI ONLINE");
-        $("connectionBackdrop").classList.remove("open");
-        showReady();
-        socket.send("STATUS");
-      };
-
-      socket.onmessage = (event) => handleDeviceMessage(event.data);
-
-      socket.onerror = () => {
-        setDevice("error", "WI-FI LINK ERROR");
-        $("connectionNote").innerHTML = "<strong>CONNECTION FAILED</strong>Check that the ESP32 and this computer are on the same Wi-Fi network.";
-      };
-
-      socket.onclose = () => {
-        if (connectionMode === "websocket") connectionMode = null;
-        if (!fired) showReady();
-        setDevice("error", "DEVICE DISCONNECTED");
-      };
-    }
-
-    async function sendCommand(command) {
-      if (connectionMode === "websocket" && socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(command);
-        return true;
-      }
-      if (connectionMode === "serial" && serialWriter) {
-        await serialWriter.write(new TextEncoder().encode(command + "\n"));
-        return true;
-      }
-      return false;
-    }
-
-    function launch() {
+    async function launch() {
       if (fired || !connectionReady()) return;
       fired = true;
+      try {
+        await set(ref(database, "gimmick/command"), {
+          action: "RELAY_ON",
+          nonce: Date.now().toString(36) + Math.random().toString(36).slice(2),
+          issuedAt: serverTimestamp()
+        });
+      } catch (error) {
+        failSequence("Firebase could not send the launch command. Check the connection and try again.");
+        return;
+      }
       $("launchButton").style.display = "none";
       $("progress").style.display = "grid";
       setBodyStage("countdown");
@@ -721,17 +586,7 @@
         activateStageDot(2);
       }, 1400));
 
-      sequenceTimers.push(setTimeout(async () => {
-        let sent = false;
-        try {
-          sent = await sendCommand("RELAY_ON");
-        } catch (error) {
-          sent = false;
-        }
-        if (!sent) {
-          failSequence("The launch command could not reach the ESP32. Reconnect and try again.");
-          return;
-        }
+      sequenceTimers.push(setTimeout(() => {
         setBodyStage("ignition");
         setCopy("LAUNCH SEQUENCE / 01", "Ignition", "GPIO 22 is now active. Ceremonial output is locked ON.");
         $("relayState").textContent = "RELAY ACTIVE";
@@ -753,32 +608,52 @@
       $("clock").textContent = time + " MYT";
     }
 
-    const savedAddress = localStorage.getItem("robotronixSocket");
-    if (savedAddress) $("socketAddress").value = savedAddress;
-
     $("launchButton").addEventListener("click", launch);
-    $("connectionButton").addEventListener("click", () => $("connectionBackdrop").classList.add("open"));
-    $("closePanel").addEventListener("click", () => $("connectionBackdrop").classList.remove("open"));
-    $("connectWifi").addEventListener("click", connectWifi);
-    $("connectUsb").addEventListener("click", connectUsb);
-    $("connectionBackdrop").addEventListener("mousedown", (event) => {
-      if (event.target === $("connectionBackdrop")) $("connectionBackdrop").classList.remove("open");
-    });
-
-    if (navigator.serial) {
-      navigator.serial.addEventListener("disconnect", () => {
-        serialWriter = null;
-        serialPort = null;
-        if (connectionMode === "serial") connectionMode = null;
-        if (!fired) failSequence("USB connection was removed. Reconnect the ESP32 before launching.");
-      });
-    }
-
     setInterval(updateClock, 1000);
     updateClock();
     showReady();
-    setDevice("", "CONNECT DEVICE");
-    $("connectionBackdrop").classList.add("open");
+    setDevice("", "CONNECTING FIREBASE");
+
+    try {
+      if (!firebaseConfig.databaseURL || firebaseConfig.databaseURL.includes("YOUR_")) {
+        throw new Error("Firebase configuration is not set");
+      }
+      database = getDatabase(initializeApp(firebaseConfig));
+
+      onValue(ref(database, ".info/connected"), (snapshot) => {
+        firebaseOnline = snapshot.val() === true;
+        if (!fired) showReady();
+      });
+
+      onValue(ref(database, "gimmick/status"), (snapshot) => {
+        const status = snapshot.val() || {};
+        lastSeen = Number(status.lastSeen || 0);
+        deviceOnline = status.device === "online" && Date.now() - lastSeen < 15000;
+        if (status.relay === true) {
+          if (!fired) showComplete(true);
+          else {
+            $("relayState").textContent = "RELAY ACTIVE";
+            setDevice("online", "RELAY ACTIVE");
+          }
+        } else if (!fired) {
+          setDevice(deviceOnline ? "online" : "", deviceOnline ? "ESP32 ONLINE" : "WAITING FOR ESP32");
+          showReady();
+        }
+      });
+
+      setInterval(() => {
+        deviceOnline = lastSeen > 0 && Date.now() - lastSeen < 15000;
+        if (!fired) {
+          setDevice(deviceOnline && firebaseOnline ? "online" : "", deviceOnline ? "ESP32 ONLINE" : "WAITING FOR ESP32");
+          showReady();
+        }
+      }, 2000);
+    } catch (error) {
+      firebaseOnline = false;
+      deviceOnline = false;
+      setDevice("error", "ADD FIREBASE CONFIG");
+      $("stageDetail").textContent = "Open firebase-config.js and paste your Firebase web configuration.";
+    }
   </script>
 </body>
 </html>
